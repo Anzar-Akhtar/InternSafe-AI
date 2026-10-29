@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0f14" />
+    <title>Screenshot Check | InternSafe AI</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <a class="brand" href="index.html"
+        ><span class="logo">✓</span> InternSafe <b>AI</b></a
+      ><button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle navigation"
+      >
+        ☰
+      </button>
+      <nav class="nav" id="nav">
+        <a class="" href="index.html">Home</a
+        ><a class="active" href="check-job.html">Check a Job</a
+        ><a class="" href="how-it-works.html">How It Works</a
+        ><a class="" href="about.html">About</a
+        ><a class="" href="safety.html">Safety</a
+        ><a class="" href="contact.html">Contact</a>
+      </nav>
+      <a class="btn btn-primary" href="check-job.html">Check a Job ↗</a>
+    </header>
+    <main>
+      <section class="wrap page-hero">
+        <div class="breadcrumbs">
+          <a href="index.html">Home</a> /
+          <a href="check-job.html">Check a Job</a> / Screenshot Check
+        </div>
+        <div class="eyebrow">IMAGE REVIEW</div>
+        <h1>Got a screenshot?<br /><span>Start here.</span></h1>
+        <p class="lead">
+          Choose an image of a job post or recruitment message.
+        </p>
+      </section>
+      <section class="wrap checker-layout">
+        <form class="panel demo-form" data-kind="image">
+          <h2>Upload a screenshot</h2>
+          <p class="sub">Only share details needed for the review.</p>
+          <div class="field">
+            <label for="jobImage">Upload screenshot</label
+            ><label class="upload" for="jobImage"
+              ><span class="icon">↑</span><b>Choose an image</b
+              ><small>PNG, JPG or WEBP</small
+              ><strong id="fileName">No file selected</strong></label
+            ><input
+              id="jobImage"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              required
+            /><small>OCR text extraction needs a backend integration.</small>
+          </div>
+          <button class="btn btn-primary full" type="submit">
+            Review input ↗
+          </button>
+          <p class="sub" style="margin: 13px 0 0">
+            Demo interface · AI backend not connected
+          </p>
+        </form>
+        <aside class="panel result-empty" aria-live="polite">
+          <div class="result-icon">✳</div>
+          <h3 class="result-title">Your review starts here.</h3>
+          <p class="result-copy">
+            Submit your input to see the demo state. A real risk assessment
+            needs a connected, evaluated backend.
+          </p>
+          <div class="notice result-note">
+            This prototype does not verify companies, scan domain reputation,
+            run OCR, or detect fraud.
+          </div>
+        </aside>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap footer-inner">
+        <a class="brand" href="index.html"
+          ><span class="logo">✓</span> InternSafe <b>AI</b></a
+        >
+        <p>Smarter checks. Safer choices.</p>
+        <small
+          >© <span class="year"></span> InternSafe AI · Student project
+          demo</small
+        >
+      </div>
+    </footer>
+    <div class="toast" id="toast" role="status"></div>
+  </body>
+</html>
