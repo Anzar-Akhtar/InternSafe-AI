@@ -90,3 +90,46 @@ document.querySelectorAll(".demo-form").forEach((form) =>
     notify("Demo interface only — no real fraud detection was performed.");
   }),
 );
+
+const reducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
+if (!reducedMotion && "IntersectionObserver" in window) {
+  const revealTargets = document.querySelectorAll(
+    "main > section, .card, .step, .faq article, .checker-layout > *, .contact-grid > *, footer",
+  );
+  const textTargets = document.querySelectorAll(
+    "main h1, main h2, main h3, main p, main .eyebrow, main .breadcrumbs, main li, footer p, footer small",
+  );
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -30px 0px" },
+  );
+
+  revealTargets.forEach((element) => {
+    const siblings = Array.from(element.parentElement.children);
+    const staggerIndex = siblings.indexOf(element) % 4;
+    element.style.setProperty("--reveal-delay", `${staggerIndex * 75}ms`);
+    element.classList.add("reveal");
+    revealObserver.observe(element);
+  });
+
+  textTargets.forEach((element) => {
+    const siblings = Array.from(element.parentElement.children).filter((sibling) =>
+      sibling.matches(
+        "h1, h2, h3, p, .eyebrow, .breadcrumbs, li, small",
+      ),
+    );
+    const staggerIndex = siblings.indexOf(element) % 4;
+    element.style.setProperty("--reveal-delay", `${staggerIndex * 60}ms`);
+    element.classList.add("text-reveal");
+    revealObserver.observe(element);
+  });
+}

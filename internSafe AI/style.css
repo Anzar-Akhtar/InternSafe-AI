@@ -840,3 +840,193 @@ footer {
     gap: 9px;
   }
 }
+
+.header {
+  animation: header-enter 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.brand .logo {
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.brand:hover .logo {
+  transform: rotate(-8deg) scale(1.06);
+  background-color: #c0ff3e1f;
+  box-shadow: 0 0 20px #c0ff3e24;
+}
+.nav a {
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+.nav a:hover {
+  transform: translateY(-1px);
+}
+.btn {
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 9px 28px #c0ff3e30;
+}
+.menu-toggle {
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.menu-toggle:hover {
+  color: var(--lime);
+  border-color: #6d8843;
+  background: #c0ff3e0d;
+}
+.card {
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.card:hover {
+  box-shadow: 0 15px 34px #0005;
+}
+.card .icon,
+.card .arrow {
+  transition: transform 0.25s ease;
+}
+.card:hover .icon {
+  transform: rotate(-5deg) scale(1.06);
+}
+.card:hover .arrow {
+  transform: translate(2px, -2px);
+}
+.step,
+.faq article {
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.step:hover,
+.faq article:hover {
+  transform: translateY(-3px);
+  border-color: #536d35;
+  box-shadow: 0 12px 28px #0003;
+}
+.field input,
+.field textarea {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.field input:focus,
+.field textarea:focus {
+  border-color: #8dbb38;
+  background-color: #0c1318;
+  box-shadow: 0 0 0 3px #c0ff3e16;
+}
+.split img,
+.contact-art img {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1),
+    filter 0.5s ease;
+}
+.split img:hover,
+.contact-art:hover img {
+  transform: scale(1.025);
+  filter: saturate(1.08);
+}
+.hero-img {
+  animation: image-drift 9s ease-in-out infinite;
+}
+.float-chip {
+  animation: chip-drift 5s ease-in-out infinite;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.reveal:not(.is-visible) {
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.text-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s cubic-bezier(0.2, 0.7, 0.3, 1),
+    color 0.25s ease;
+}
+.text-reveal:not(.is-visible) {
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.text-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero h1 span,
+.page-hero h1 span {
+  transition: text-shadow 0.25s ease;
+}
+.hero h1 span:hover,
+.page-hero h1 span:hover {
+  text-shadow: 0 0 24px #c0ff3e35;
+}
+@keyframes header-enter {
+  from {
+    opacity: 0.75;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes image-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes chip-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .text-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
