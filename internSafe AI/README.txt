@@ -15,7 +15,11 @@ Shared assets: style.css and script.js
 Run:
 1. Extract the ZIP.
 2. Open the folder in VS Code.
-3. Open index.html with Live Server, or double-click index.html.
+3. Open index.html with VS Code Live Server (localhost). Sign-in uses browser
+   cryptography, which requires localhost or HTTPS.
 Images load from Unsplash, so internet is needed to show them.
-The forms are front-end demos only. Real NLP, OCR, URL reputation checks, company verification,
-and risk scoring require a connected and evaluated backend. The contact form does not send data.
+Account profiles and check history are stored in this browser only. This is a
+front-end demo, not secure authentication; do not reuse a real password or enter
+sensitive job details. Clearing browser data removes accounts and history.
+Real NLP, OCR, URL reputation checks, company verification, and risk scoring need
+a connected, evaluated backend. The contact form does not send data.

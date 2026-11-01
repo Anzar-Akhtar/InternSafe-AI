@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0f14" />
+    <title>My Account | InternSafe AI</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body data-auth-required="true">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="logo">✓</span> InternSafe <b>AI</b></a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <nav class="nav" id="nav">
+        <a href="index.html">Home</a><a href="how-it-works.html">How It Works</a
+        ><a href="about.html">About</a><a href="safety.html">Safety</a
+        ><a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-primary" href="check-job.html">Check a Job ↗</a>
+        <details class="account-menu" data-account-menu>
+          <summary class="account-avatar" aria-label="Open account menu">
+            <svg class="account-avatar-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" /></svg>
+            <span class="account-initials" hidden></span>
+          </summary>
+          <div class="account-dropdown">
+            <strong data-account-name>Your account</strong><p><span data-account-count>0</span> jobs checked</p>
+            <a href="dashboard.html" data-account-signed-in hidden>View dashboard & history</a>
+            <a href="sign-in.html" data-account-signed-out>Sign in</a>
+            <a href="sign-up.html" data-account-signed-out>Create an account</a>
+            <button type="button" data-account-signed-in data-account-logout hidden>Sign out</button>
+            <small>Saved in this browser</small>
+          </div>
+        </details>
+      </div>
+    </header>
+    <main>
+      <section class="wrap dashboard-hero">
+        <div>
+          <div class="eyebrow">YOUR ACCOUNT</div>
+          <h1>Welcome back,<br /><span id="dashboardName"></span></h1>
+          <p class="lead" id="dashboardEmail"></p>
+        </div>
+        <a class="btn btn-primary" href="check-job.html">Start a job check ↗</a>
+      </section>
+      <section class="section">
+        <div class="wrap dashboard-history">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">YOUR ACTIVITY</div>
+              <h2>Job check history <span class="history-count" id="historyCount">0</span></h2>
+            </div>
+            <button class="btn btn-ghost" type="button" data-clear-history>Clear history</button>
+          </div>
+          <div class="notice">Your history is saved in this browser only. These are demo inputs; no automated analysis or fraud result is generated.</div>
+          <div class="history-list" id="historyList"></div>
+          <div class="panel history-empty" id="historyEmpty">
+            <div class="result-icon">✳</div>
+            <h3>No job checks yet</h3>
+            <p>Your saved checks and demo results will appear here.</p>
+            <a class="btn btn-primary" href="check-job.html">Check a job ↗</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="wrap footer-inner">
+        <a class="brand" href="index.html"><span class="logo">✓</span> InternSafe <b>AI</b></a>
+        <p>Smarter checks. Safer choices.</p>
+        <small>© <span class="year"></span> InternSafe AI · Student project demo</small>
+      </div>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

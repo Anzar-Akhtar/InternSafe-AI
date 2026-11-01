@@ -26,7 +26,24 @@
         ><a class="" href="safety.html">Safety</a
         ><a class="active" href="contact.html">Contact</a>
       </nav>
-      <a class="btn btn-primary" href="check-job.html">Check a Job ↗</a>
+      <div class="header-actions">
+        <a class="btn btn-primary" href="check-job.html">Check a Job ↗</a>
+        <details class="account-menu" data-account-menu>
+          <summary class="account-avatar" aria-label="Open account menu">
+            <svg class="account-avatar-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" /></svg>
+            <span class="account-initials" hidden></span>
+          </summary>
+          <div class="account-dropdown">
+            <strong data-account-name>Your account</strong>
+            <p><span data-account-count>0</span> jobs checked</p>
+            <a href="dashboard.html" data-account-signed-in hidden>View dashboard & history</a>
+            <a href="sign-in.html" data-account-signed-out>Sign in</a>
+            <a href="sign-up.html" data-account-signed-out>Create an account</a>
+            <button type="button" data-account-signed-in data-account-logout hidden>Sign out</button>
+            <small>Saved in this browser</small>
+          </div>
+        </details>
+      </div>
     </header>
     <main>
       <section class="wrap page-hero">

@@ -26,6 +26,234 @@ function notify(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove("show"), 3300);
 }
+
+const accountsKey = "internsafe-demo-accounts";
+const signedInKey = "internsafe-demo-user";
+const pageName = location.pathname.split("/").pop() || "index.html";
+const protectedPages = new Set([
+  "check-job.html",
+  "url-check.html",
+  "text-check.html",
+  "screenshot-check.html",
+  "dashboard.html",
+]);
+const historyKey = (userId) => `internsafe-demo-history-${userId}`;
+const bytesToHex = (bytes) =>
+  Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+
+function readAccounts() {
+  const accounts = JSON.parse(localStorage.getItem(accountsKey) || "[]");
+  if (!Array.isArray(accounts)) {
+    throw new Error("Saved account data is invalid. Clear this site's browser data and try again.");
+  }
+  return accounts;
+}
+
+function readHistory(userId) {
+  const history = JSON.parse(localStorage.getItem(historyKey(userId)) || "[]");
+  if (!Array.isArray(history)) {
+    throw new Error("Saved job history is invalid. Clear this site's browser data and try again.");
+  }
+  return history;
+}
+
+async function hashPassword(password, salt) {
+  if (!crypto?.subtle) {
+    throw new Error("Account sign-in needs a secure browser context. Open this site using localhost or HTTPS.");
+  }
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const digest = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", salt, iterations: 120000, hash: "SHA-256" },
+    key,
+    256,
+  );
+  return bytesToHex(digest);
+}
+
+let activeAccount = null;
+try {
+  const userId = localStorage.getItem(signedInKey);
+  activeAccount = userId ? readAccounts().find((account) => account.id === userId) || null : null;
+} catch (error) {
+  console.error(error);
+  notify(error.message);
+}
+
+if (document.body.dataset.authRequired === "true" && !activeAccount) {
+  document.body.hidden = true;
+  const next = protectedPages.has(pageName) ? pageName : "check-job.html";
+  location.replace(`sign-in.html?next=${encodeURIComponent(next)}`);
+}
+
+function updateAccountMenus() {
+  document.querySelectorAll("[data-account-menu]").forEach((menu) => {
+    const avatar = menu.querySelector(".account-avatar");
+    const initials = menu.querySelector(".account-initials");
+    const icon = menu.querySelector(".account-avatar-icon");
+    const name = activeAccount?.name || "";
+    if (activeAccount) {
+      icon.hidden = true;
+      initials.hidden = false;
+      initials.textContent = name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+      avatar.setAttribute("aria-label", `Account menu for ${name}`);
+    } else {
+      icon.hidden = false;
+      initials.hidden = true;
+      avatar.setAttribute("aria-label", "Open account menu");
+    }
+
+    const count = activeAccount ? readHistory(activeAccount.id).length : 0;
+    menu.querySelector("[data-account-count]").textContent = count;
+    menu.querySelector("[data-account-name]").textContent = activeAccount?.name || "Your account";
+    menu.querySelectorAll("[data-account-signed-in]").forEach((element) => {
+      element.hidden = !activeAccount;
+    });
+    menu.querySelectorAll("[data-account-signed-out]").forEach((element) => {
+      element.hidden = Boolean(activeAccount);
+    });
+  });
+}
+
+try {
+  updateAccountMenus();
+} catch (error) {
+  console.error(error);
+  notify(error.message);
+}
+
+document.querySelectorAll("[data-account-logout]").forEach((button) => {
+  button.addEventListener("click", () => {
+    localStorage.removeItem(signedInKey);
+    location.href = "index.html";
+  });
+});
+
+document.addEventListener("click", (event) => {
+  document.querySelectorAll("[data-account-menu][open]").forEach((menu) => {
+    if (!menu.contains(event.target)) menu.open = false;
+  });
+});
+
+document.querySelectorAll(".auth-form").forEach((form) => {
+  const passwordInput = form.querySelector("#password");
+  const confirmInput = form.querySelector("#confirmPassword");
+  if (confirmInput) {
+    const validateMatch = () => {
+      confirmInput.setCustomValidity(
+        confirmInput.value && confirmInput.value !== passwordInput.value
+          ? "Passwords do not match."
+          : "",
+      );
+    };
+    passwordInput.addEventListener("input", validateMatch);
+    confirmInput.addEventListener("input", validateMatch);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = form.querySelector('[type="submit"]');
+    submit.disabled = true;
+    try {
+      const email = form.querySelector("#email").value.trim().toLowerCase();
+      const accounts = readAccounts();
+
+      if (form.dataset.kind === "sign-up") {
+        const name = form.querySelector("#name").value.trim();
+        if (accounts.some((account) => account.email === email)) {
+          notify("An account already exists for this email. Please sign in.");
+          return;
+        }
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const account = {
+          id: bytesToHex(crypto.getRandomValues(new Uint8Array(16))),
+          name,
+          email,
+          salt: bytesToHex(salt),
+          passwordHash: await hashPassword(passwordInput.value, salt),
+        };
+        accounts.push(account);
+        localStorage.setItem(accountsKey, JSON.stringify(accounts));
+        activeAccount = account;
+      } else {
+        const account = accounts.find((item) => item.email === email);
+        if (!account) {
+          notify("Email or password is incorrect.");
+          return;
+        }
+        const salt = Uint8Array.from(
+          account.salt.match(/.{2}/g),
+          (byte) => Number.parseInt(byte, 16),
+        );
+        if ((await hashPassword(passwordInput.value, salt)) !== account.passwordHash) {
+          notify("Email or password is incorrect.");
+          return;
+        }
+        activeAccount = account;
+      }
+
+      localStorage.setItem(signedInKey, activeAccount.id);
+      const next = new URLSearchParams(location.search).get("next");
+      location.href = protectedPages.has(next) ? next : "dashboard.html";
+    } catch (error) {
+      console.error(error);
+      notify(error.message || "Unable to save your account in this browser.");
+    } finally {
+      submit.disabled = false;
+    }
+  });
+});
+
+function renderDashboard() {
+  if (!activeAccount || !document.getElementById("historyList")) return;
+  document.getElementById("dashboardName").textContent = activeAccount.name;
+  document.getElementById("dashboardEmail").textContent = activeAccount.email;
+  const checks = readHistory(activeAccount.id);
+  document.getElementById("historyCount").textContent = checks.length;
+  const list = document.getElementById("historyList");
+  list.replaceChildren();
+  document.getElementById("historyEmpty").hidden = checks.length !== 0;
+  checks.forEach((check) => {
+    const item = document.createElement("article");
+    item.className = "history-item";
+    const details = document.createElement("div");
+    const title = document.createElement("h3");
+    title.textContent = { url: "Job link", text: "Job description", image: "Screenshot" }[check.kind];
+    const preview = document.createElement("p");
+    preview.textContent = check.preview;
+    details.append(title, preview);
+    const result = document.createElement("div");
+    result.className = "history-result";
+    const status = document.createElement("strong");
+    status.textContent = check.result;
+    const date = document.createElement("time");
+    date.dateTime = check.date;
+    date.textContent = new Date(check.date).toLocaleString();
+    result.append(status, date);
+    item.append(details, result);
+    list.append(item);
+  });
+  updateAccountMenus();
+}
+
+try {
+  renderDashboard();
+} catch (error) {
+  console.error(error);
+  notify(error.message);
+}
+
+document.querySelector("[data-clear-history]")?.addEventListener("click", () => {
+  if (!activeAccount) return;
+  localStorage.removeItem(historyKey(activeAccount.id));
+  renderDashboard();
+});
+
 const imageInput = document.getElementById("jobImage");
 if (imageInput) {
   imageInput.addEventListener("change", () => {
@@ -80,6 +308,31 @@ document.querySelectorAll(".demo-form").forEach((form) =>
       image:
         "The image was selected. OCR extraction is not connected in this prototype.",
     };
+    if (!activeAccount) {
+      location.href = `sign-in.html?next=${encodeURIComponent(pageName)}`;
+      return;
+    }
+    try {
+      const preview =
+        kind === "url"
+          ? document.getElementById("jobUrl").value.trim()
+          : kind === "text"
+            ? document.getElementById("jobText").value.trim()
+            : imageInput.files[0].name;
+      const history = readHistory(activeAccount.id);
+      history.unshift({
+        kind,
+        preview: preview.slice(0, 180),
+        result: "Demo only — no fraud result generated",
+        date: new Date().toISOString(),
+      });
+      localStorage.setItem(historyKey(activeAccount.id), JSON.stringify(history));
+      updateAccountMenus();
+    } catch (error) {
+      console.error(error);
+      notify(error.message || "Unable to save this check in your account history.");
+      return;
+    }
     if (result) {
       result.querySelector(".result-title").textContent = titles[kind];
       result.querySelector(".result-copy").textContent = copy[kind];
