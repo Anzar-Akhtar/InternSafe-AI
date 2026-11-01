@@ -1329,3 +1329,7 @@ footer {
     text-align: left;
   }
 }
+
+.btn-ghost{
+  background-color: #c0ff3e;;
+}
